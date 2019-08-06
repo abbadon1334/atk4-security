@@ -24,10 +24,11 @@ class IDS
     {
         $this->validator = new \vakata\ids\IDS();
 
-        $level = $this->validator->analyzeData([
-            'GET'  => $request->getQueryParams() ?? [],
-            'POST' => $request->getParsedBody() ?? [],
-        ],
+        $level = $this->validator->analyzeData(
+            [
+                'GET'  => $request->getQueryParams() ?? [],
+                'POST' => $request->getParsedBody() ?? [],
+            ],
             $this->threshold
         );
 

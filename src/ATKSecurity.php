@@ -12,6 +12,7 @@ use atk4\core\DIContainerTrait;
 use atk4\core\HookTrait;
 use atk4\core\InitializerTrait;
 use atk4\data\Model;
+use atk4\data\ValidationException;
 use atk4\ui\App;
 use atk4\ui\Exception;
 use atk4\ui\Form;
@@ -30,7 +31,7 @@ class ATKSecurity
     /** @var App */
     public $app;
 
-    /* IDS Injections */
+    // IDS Injections
     /** @var bool auto check intrusion detection */
     public $intrusion_detection_check = true;
     /** @var int threshold level for evaluate intrusion */
@@ -42,13 +43,13 @@ class ATKSecurity
     /** @var bool if intrusion detected exit process */
     public $intrusion_detection_abort = true;
 
-    /* CSRF Injections */
+    // CSRF Injections
     /** @var string session prefix for CSRF */
     public $csrf_prefix = 'CSRF';
     /** @var string CSRF hash algo */
     public $csrf_algo = 'sha256';
 
-    /* Bruteforce Injections */
+    // Bruteforce Injections
     /** @var bool on bruteforce use sleep function */
     public $bruteforce_use_sleep = true;
     /** @var bool on bruteforce use atk hook */
@@ -59,7 +60,7 @@ class ATKSecurity
     public $bruteforce_abort_on  = false;
     /** @var array rules - attempt_number => seconds_to_wait */
     public $bruteforce_throttle_rules = [
-        /* until 4 - 0 wait time */
+        // until 4 - 0 wait time
         4 => 2,
         5 => 4,
         6 => 6,
@@ -74,13 +75,15 @@ class ATKSecurity
     /** @var CSRF */
     private $CSRF;
 
-    public function __construct($options = [])
+    public function __construct(?array $defaults = null)
     {
-        $this->setDefaults($options);
+        $this->setDefaults($defaults ?? []);
     }
 
     public function init(): void
     {
+        $this->_init();
+
         $this->request = ServerRequestFactory::fromGlobals();
 
         $this->CSRF = new CSRF([
@@ -93,7 +96,7 @@ class ATKSecurity
         }
     }
 
-    /* IDS */
+    // IDS
     public function checkIntrusionDetection(): void
     {
         $IDS = new IDS([
@@ -107,15 +110,10 @@ class ATKSecurity
         }
     }
 
-    /* CSRF */
+    // CSRF
     public function createCSRF(string $identifier): string
     {
         return $this->CSRF->create($identifier);
-    }
-
-    public function forgetCSRF(string $identifier): void
-    {
-        $this->CSRF->forget($identifier);
     }
 
     public function validateCSRF(string $identifier, string $token): bool
@@ -125,24 +123,24 @@ class ATKSecurity
 
     public function addFieldCSRF(Form $form, string $field_name = 'CSRF'): void
     {
-        $this->createCSRF($form->name);
-        $form->addField($field_name, Hidden::class, [
+        $field = $form->addField($field_name, [Hidden::class], [
             'never_persist' => true,
         ]);
 
-        $this->addHook('beforeSave', function (Model $m, $form) use ($field_name): void {
-            if ($this->validateCSRF($form->name, $m[$field_name])) {
-                $this->forgetCSRF($form->name);
-                unset($m[$field_name]);
+        if ('GET' === $this->request->getMethod()) {
+            $field->set($this->createCSRF($form->name));
+        }
 
-                return;
+        $form->model->addHook('beforeSave', function (Model $m) use ($form, $field_name): void {
+            if (!$this->validateCSRF($form->name, $m[$field_name])) {
+                throw new ValidationException(['CSRF' => 'Token not valid'], $this);
             }
-
-            $m->breakHook('CSRF');
-        }, $form, -100);
+            $this->CSRF->forget($form->name);
+            unset($m[$field_name]);
+        }, null, -100);
     }
 
-    /* Bruteforce */
+    // Bruteforce
     public function validateRequestBruteforce(): void
     {
         $bruteforce = new Bruteforce([
@@ -154,18 +152,14 @@ class ATKSecurity
         $attempt_number = $bruteforce->getAttemptNumber();
         $throttle_time  = $bruteforce->getThrottleTime();
 
-        if (false !== $this->bruteforce_raise_on) {
-            if ($this->bruteforce_raise_on > $attempt_number) {
-                throw new Exception(['Bruteforce detected',
-                    'attempt' => $attempt_number,
-                ]);
-            }
+        if (false !== $this->bruteforce_raise_on && $this->bruteforce_raise_on > $attempt_number) {
+            throw new Exception(['Bruteforce detected',
+                'attempt' => $attempt_number,
+            ]);
         }
 
-        if (false !== $this->bruteforce_abort_on) {
-            if ($this->bruteforce_abort_on > $attempt_number) {
-                $this->app->terminate('Bruteforce detected ('.$attempt_number.')');
-            }
+        if (false !== $this->bruteforce_abort_on && $this->bruteforce_abort_on > $attempt_number) {
+            $this->app->terminate('Bruteforce detected ('.$attempt_number.')');
         }
 
         if ($this->bruteforce_use_hook) {

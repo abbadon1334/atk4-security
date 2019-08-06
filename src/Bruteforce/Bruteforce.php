@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Abbadon1334\ATKSecurity\Bruteforce;
 
 use atk4\core\DIContainerTrait;
+use atk4\core\NameTrait;
 use atk4\core\SessionTrait;
 use atk4\ui\Exception;
 use Zend\Diactoros\ServerRequest;
@@ -12,6 +13,7 @@ use Zend\Diactoros\ServerRequest;
 class Bruteforce
 {
     use DIContainerTrait;
+    use NameTrait;
     use SessionTrait {
         forget as _forget;
     }
@@ -19,7 +21,7 @@ class Bruteforce
     public $prefix = 'BTF';
 
     public $throttle_rules = [
-        /* until 4 - 0 wait time */
+        // until 4 - 0 wait time
         4 => 2,
         5 => 4,
         6 => 6,
@@ -49,7 +51,7 @@ class Bruteforce
                 $this->throttle_rules[$attempt_count] = $attempt_wait;
             }
             $attempt_wait = $this->throttle_rules[$attempt_count];
-            $attempt_count++;
+            ++$attempt_count;
         }
 
         $this->attempt_max = count($this->throttle_rules);
@@ -71,7 +73,7 @@ class Bruteforce
 
     public function attemptCountIncrementOrMAX(): void
     {
-        $this->attempt++;
+        ++$this->attempt;
 
         if ($this->attempt > $this->attempt_max) {
             $this->attempt = $this->attempt_max;

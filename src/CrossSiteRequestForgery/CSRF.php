@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Abbadon1334\ATKSecurity\CrossSiteRequestForgery;
 
 use atk4\core\DIContainerTrait;
+use atk4\core\NameTrait;
 use atk4\core\SessionTrait;
+use atk4\core\TrackableTrait;
 
 class CSRF
 {
     use DIContainerTrait;
+    use NameTrait;
     use SessionTrait {
         forget as _forget;
     }
@@ -20,6 +23,7 @@ class CSRF
     public function __construct($options = [])
     {
         $this->setDefaults($options);
+        $this->name = 'ATKCSRF';
     }
 
     public function create(string $identifier): string
