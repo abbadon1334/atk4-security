@@ -139,6 +139,7 @@ class ATKSecurity
             }
 
             $m->breakHook('CSRF');
+
         },$form,-100);
     }
 
