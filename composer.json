@@ -1,0 +1,81 @@
+{
+    "name": "abbadon1334/atk4-security",
+    "description": "ATK4 addon to added a layer of security and PHPIDS Intrusion Detection System",
+    "type": "library",
+    "require": {
+        "php": ">=7.2.0",
+        "atk4/ui": "dev-develop",
+        "vakata/ids": "dev-master",
+        "zendframework/zend-diactoros": "^2.1@dev",
+        "thecodingmachine/safe": "^0.1.0@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "abbadon1334",
+            "email": "fdanti@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": false,
+    "autoload": {
+        "psr-4": {
+            "Abbadon1334\\ATKSecurity\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abbadon1334\\ATKSecurity\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "fix": "php-cs-fixer fix --config=.php_cs.dist demos src tests",
+        "stan": "phpstan analyse demos src tests",
+        "stan1": "phpstan analyse --level 1 demos src tests",
+        "stan2": "phpstan analyse --level 2 demos src tests",
+        "stan3": "phpstan analyse --level 3 demos src tests",
+        "stan4": "phpstan analyse --level 4 demos src tests",
+        "stan5": "phpstan analyse --level 5 demos src tests",
+        "stan6": "phpstan analyse --level 6 demos src tests",
+        "stan7": "phpstan analyse --level 7 demos src tests",
+        "metrics": [
+            "mkdir -p ./build/report",
+            "mv ./build/report ./build/report_$(date +\"%Y.%m.%d_%H%M%S\")",
+            "phpmetrics --config=./.phpmetrics.json .",
+            "firefox ./build/report/phpmetrics.html/index.html"
+        ],
+        "metrics-clear": [
+            "rm -rf ./build/report_*",
+            "rm -rf ./build/report"
+        ],
+        "unit": [
+            "mkdir -p ./build/coverage",
+            "mv ./build/coverage ./build/coverage_$(date +\"%Y.%m.%d_%H%M%S\")",
+            "phpunit --configuration phpunit.xml"
+        ],
+        "unit-html": [
+            "mkdir -p ./build/coverage",
+            "mv ./build/coverage ./build/coverage_$(date +\"%Y.%m.%d_%H%M%S\")",
+            "phpunit --configuration phpunit.xml --coverage-html ./build/coverage",
+            "firefox ./build/coverage/index.html"
+        ],
+        "unit-clear": [
+            "rm -rf ./build/coverage_*",
+            "rm -rf ./build/coverage"
+        ]
+    },
+    "require-dev": {
+        "codacy/coverage": "dev-master",
+        "friendsofphp/php-cs-fixer": "dev-master@dev",
+        "phpmd/phpmd": "2.7.0",
+        "behat/behat": "^3.4",
+        "phpmetrics/phpmetrics": "dev-master@dev",
+        "phpstan/phpstan": "0.11.12",
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "3.4.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/process": "^4.3",
+        "atk4/schema": "dev-develop",
+        "phpunit/phpcov": "^3.0"
+    }
+}
