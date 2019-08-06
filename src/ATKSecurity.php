@@ -131,16 +131,15 @@ class ATKSecurity
         ]);
 
         $this->addHook('beforeSave', function (Model $m, $form) use ($field_name): void {
-
             if ($this->validateCSRF($form->name, $m[$field_name])) {
                 $this->forgetCSRF($form->name);
                 unset($m[$field_name]);
+
                 return;
             }
 
             $m->breakHook('CSRF');
-
-        },$form,-100);
+        }, $form, -100);
     }
 
     /* Bruteforce */
