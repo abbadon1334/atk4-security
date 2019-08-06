@@ -49,7 +49,7 @@ class Bruteforce
                 $this->throttle_rules[$attempt_count] = $attempt_wait;
             }
             $attempt_wait = $this->throttle_rules[$attempt_count];
-            ++$attempt_count;
+            $attempt_count++;
         }
 
         $this->attempt_max = count($this->throttle_rules);
@@ -71,7 +71,7 @@ class Bruteforce
 
     public function attemptCountIncrementOrMAX(): void
     {
-        ++$this->attempt;
+        $this->attempt++;
 
         if ($this->attempt > $this->attempt_max) {
             $this->attempt = $this->attempt_max;
