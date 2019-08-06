@@ -11,8 +11,11 @@ use atk4\core\AppScopeTrait;
 use atk4\core\DIContainerTrait;
 use atk4\core\HookTrait;
 use atk4\core\InitializerTrait;
+use atk4\data\Model;
 use atk4\ui\App;
 use atk4\ui\Exception;
+use atk4\ui\Form;
+use atk4\ui\FormField\Hidden;
 use Zend\Diactoros\ServerRequestFactory;
 
 class ATKSecurity
@@ -118,6 +121,25 @@ class ATKSecurity
     public function validateCSRF(string $identifier, string $token): bool
     {
         return $this->CSRF->validate($identifier, $token);
+    }
+
+    public function addFieldCSRF(Form $form, string $field_name = 'CSRF'): void
+    {
+        $this->createCSRF($form->name);
+        $form->addField($field_name, Hidden::class, [
+            'never_persist' => true,
+        ]);
+
+        $this->addHook('beforeSave', function (Model $m, $form) use ($field_name): void {
+
+            if ($this->validateCSRF($form->name, $m[$field_name])) {
+                $this->forgetCSRF($form->name);
+                unset($m[$field_name]);
+                return;
+            }
+
+            $m->breakHook('CSRF');
+        },$form,-100);
     }
 
     /* Bruteforce */
