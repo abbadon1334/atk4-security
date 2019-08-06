@@ -7,7 +7,6 @@ namespace Abbadon1334\ATKSecurity\CrossSiteRequestForgery;
 use atk4\core\DIContainerTrait;
 use atk4\core\NameTrait;
 use atk4\core\SessionTrait;
-use atk4\core\TrackableTrait;
 
 class CSRF
 {

@@ -29,39 +29,39 @@ class ATKSecurityTest extends BuiltInWebServerAbstract
     public function testAddFieldCSRF(): void
     {
         $response = $this->getResponseFromRequestGET('CSRF.php');
-        $this->assertEquals(200,$response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
 
-        $CSRF1 = $this->getCSRFFromBody( $response->getBody()->getContents());
+        $CSRF1 = $this->getCSRFFromBody($response->getBody()->getContents());
         $this->assertNotNull($CSRF1);
 
         $response = $this->getResponseFromRequestGET('CSRF.php');
-        $this->assertEquals(200,$response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
 
-        $CSRF2 = $this->getCSRFFromBody( $response->getBody()->getContents());
+        $CSRF2 = $this->getCSRFFromBody($response->getBody()->getContents());
         $this->assertNotNull($CSRF2);
 
-        $this->assertNotEquals($CSRF1,$CSRF2);
+        $this->assertNotEquals($CSRF1, $CSRF2);
 
         $response = $this->getResponseFromRequestFormPOST(
-            'CSRF.php?atk_centered_form_submit=ajax&__atk_callback=1',[
-            'CSRF' => 'test will give error',
-            'username' => 'abc',
-            'email' => 'test',
-            'atk_centered_form_submit' => 'submit'
-        ]);
-        $this->assertEquals(200,$response->getStatusCode());
+            'CSRF.php?atk_centered_form_submit=ajax&__atk_callback=1', [
+                'CSRF'                     => 'test will give error',
+                'username'                 => 'abc',
+                'email'                    => 'test',
+                'atk_centered_form_submit' => 'submit',
+            ]);
+        $this->assertEquals(200, $response->getStatusCode());
         $body = $response->getBody()->getContents();
-        $this->assertEquals(200,$response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testValidateRequestBruteforce(): void
     {
-        /** @TODO TEST */
+        /* @TODO TEST */
     }
 
     public function testCheckIntrusionDetection(): void
     {
-        /** @TODO TEST */
+        /* @TODO TEST */
     }
 
     /**
@@ -69,10 +69,11 @@ class ATKSecurityTest extends BuiltInWebServerAbstract
      *
      * @return string|null
      */
-    private function getCSRFFromBody(string $body)
-    : ?string {
+    private function getCSRFFromBody(string $body): ?string
+    {
         $re = '/CSRF.*value\=\"(.*)\"/m';
         preg_match_all($re, $body, $matches, PREG_SET_ORDER, 0);
+
         return $matches[0][1] ?? null;
     }
 }
