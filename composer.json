@@ -7,7 +7,7 @@
         "atk4/ui": "dev-develop",
         "vakata/ids": "dev-master",
         "zendframework/zend-diactoros": "^2.1@dev",
-        "thecodingmachine/safe": "^0.1.0@dev"
+        "thecodingmachine/safe": "^2.0.0@dev"
     },
     "license": "MIT",
     "authors": [
