@@ -76,6 +76,6 @@
         "guzzlehttp/guzzle": "^6.3",
         "symfony/process": "^4.3",
         "atk4/schema": "dev-develop",
-        "phpunit/phpcov": "^3.0"
+        "phpunit/phpcov": "^10.0"
     }
 }
