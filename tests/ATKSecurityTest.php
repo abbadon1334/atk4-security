@@ -43,12 +43,14 @@ class ATKSecurityTest extends BuiltInWebServerAbstract
         $this->assertNotEquals($CSRF1, $CSRF2);
 
         $response = $this->getResponseFromRequestFormPOST(
-            'CSRF.php?atk_centered_form_submit=ajax&__atk_callback=1', [
+            'CSRF.php?atk_centered_form_submit=ajax&__atk_callback=1',
+            [
                 'CSRF'                     => 'test will give error',
                 'username'                 => 'abc',
                 'email'                    => 'test',
                 'atk_centered_form_submit' => 'submit',
-            ]);
+            ]
+        );
         $this->assertEquals(200, $response->getStatusCode());
         $body = $response->getBody()->getContents();
         $this->assertEquals(200, $response->getStatusCode());
