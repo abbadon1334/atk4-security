@@ -68,7 +68,7 @@
         "codacy/coverage": "dev-master",
         "friendsofphp/php-cs-fixer": "dev-master@dev",
         "phpmd/phpmd": "2.7.0",
-        "behat/behat": "^3.4",
+        "behat/behat": "^4.0",
         "phpmetrics/phpmetrics": "dev-master@dev",
         "phpstan/phpstan": "0.11.12",
         "phpunit/phpunit": "*",
